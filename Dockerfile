@@ -1,12 +1,9 @@
-#applicationのディレクトリ名で置き換えてください
-ARG APP_NAME=rails_docker_sample
-#使いたいrubyのimage名に置き換えてください
-ARG RUBY_VERSION=ruby:2.5.1
-#使いたいnodeのversionに置き換えてください
-ARG NODE_VERSION='16'
+#{{}}を丸ごと使いたいrubyのimage名に置き換えてください
+ARG RUBY_VERSION={{rubyのimage名}}
+#{{}}を丸ごと使いたいnodeのversionに置き換えてください
+ARG NODE_VERSION={{nodeのversion小数点以下はいりません}}
 
 FROM $RUBY_VERSION
-ARG APP_NAME
 ARG RUBY_VERSION
 ARG NODE_VERSION
 ENV LANG C.UTF-8
@@ -17,11 +14,11 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
 && apt-get update -qq \
 && apt-get install -y build-essential nodejs yarn
 RUN mkdir /$APP_NAME
-WORKDIR /$APP_NAME
-RUN gem install bundler:2.3.17
-COPY Gemfile /$APP_NAME/Gemfile
-COPY Gemfile.lock /$APP_NAME/Gemfile.lock
-COPY yarn.lock /$APP_NAME/yarn.lock
+WORKDIR /app
+RUN gem install bundler
+COPY Gemfile /app/Gemfile
+COPY Gemfile.lock /app/Gemfile.lock
+COPY yarn.lock /app/yarn.lock
 RUN bundle install
 RUN yarn install
-COPY . /$APP_NAME
+COPY . /app
